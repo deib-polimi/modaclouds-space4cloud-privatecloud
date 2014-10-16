@@ -64,7 +64,7 @@ public class Result {
 							if (tier.machines[t].replicas <= 0)
 								return;
 							
-							--tier.machines[t].replicas;
+							tier.machines[t].replicas--;
 							
 							Host host = hosts.get(h);
 							host.addMachine(tier, t);

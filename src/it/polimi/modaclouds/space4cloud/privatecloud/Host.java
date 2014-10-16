@@ -121,7 +121,7 @@ public class Host {
 	
 	public void addMachine(Tier t, int h) {
 		Solution sol = allocatedSolutions.add(t.providerName, t.id, t.name, t.resourceName, t.serviceName, t.serviceType);
-		++sol.tiers.get(t.id).machines[h].replicas;
+		sol.tiers.get(t.id).machines[h].replicas++;
 	}
 	
 }

@@ -25,7 +25,7 @@ public class Data {
 	private static DecimalFormat doubleFormatter() {
 		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.getDefault());
 		otherSymbols.setDecimalSeparator('.');
-		DecimalFormat myFormatter = new DecimalFormat("#.000#######", otherSymbols);
+		DecimalFormat myFormatter = new DecimalFormat("0.000#######", otherSymbols);
 		return myFormatter;
 	}
 	
@@ -194,7 +194,30 @@ public class Data {
 			}
 			out.println(";");
 			
-			// TODO: variabile rho (tier ratio)
+			out.print("param TierRatio default 0 :=");
+			int w1 = 1, w2 = 1;
+			for (Solution s : solution.getAll()) {
+				for (Tier t1 : s.tiers.values()) {
+					w2 = 1;
+					for (Solution s2 : solution.getAll()) {
+						for (Tier t2 : s2.tiers.values()) {
+							double ratio;
+							for (h = 0; h < t1.machines.length; ++h) {
+								ratio = 0;
+								if (w1 == w2)
+									ratio = 1;
+								else if (t1.providerName.equals(t2.providerName)) {
+									ratio = ((double)t2.machines[h].replicas) / t1.machines[h].replicas;
+								}
+								out.printf("\nr%s r%s t%s %s", tierFormatter.format(w1), tierFormatter.format(w2), timeIntFormatter.format(h+1), doubleFormatter.format(ratio));
+							}
+							w2++;
+						}
+					}
+					w1++;
+				}
+			}
+			out.println(";");
 			
 			
 			out.flush();
