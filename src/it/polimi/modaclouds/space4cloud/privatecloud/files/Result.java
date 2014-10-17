@@ -1,12 +1,16 @@
 package it.polimi.modaclouds.space4cloud.privatecloud.files;
 
+import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 import it.polimi.modaclouds.space4cloud.privatecloud.Host;
 import it.polimi.modaclouds.space4cloud.privatecloud.solution.Solution;
 import it.polimi.modaclouds.space4cloud.privatecloud.solution.SolutionMulti;
 import it.polimi.modaclouds.space4cloud.privatecloud.solution.Tier;
 
+import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -35,16 +39,27 @@ public class Result {
 		}
 	}
 	
-	public void export() {
-		solution.exportLight(Paths.get("solution-public.xml"));
+	public List<File> export() {
+		ArrayList<File> files = new ArrayList<File>();
+		
+		Path p = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY, "solution-public.xml");
+		solution.exportLight(p);
+		files.add(p.toFile());
+		
 		int i = 1;
-		for (Host h : hosts)
-			h.allocatedSolutions.exportLight(Paths.get("solution-private-h" + i++ + ".xml"));
+		for (Host h : hosts) {
+			p = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY, "solution-private-h" + i++ + ".xml");
+			h.allocatedSolutions.exportLight(p);
+			files.add(p.toFile());
+		}
+		
+		return files;
 	}
 	
-	public static void parse(SolutionMulti solution, List<Host> hosts) {
+	public static List<File> parse(SolutionMulti solution, List<Host> hosts) {
 		Result result = new Result(solution, hosts);
 		result.parse("rez.out");
+		return result.export();
 	}
 	
 	public void match(String s) {

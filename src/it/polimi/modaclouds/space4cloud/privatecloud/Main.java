@@ -1,6 +1,7 @@
 package it.polimi.modaclouds.space4cloud.privatecloud;
 
 import java.io.File;
+import java.util.List;
 
 public class Main {
 
@@ -9,10 +10,13 @@ public class Main {
 		String configuration  = basePath + "conf-optimization-private.properties";
 		String solution       = basePath + "OfBiz\\solution.xml";
 		
-		File f = PrivateCloud.perform(configuration, solution);
-		if (f != null && f.exists())
+		List<File> files = PrivateCloud.perform(configuration, solution);
+		boolean done = false;
+		for (File f : files) {
 			System.out.println("Solution: " + f.getAbsolutePath());
-		else
+			done = true;
+		}
+		if (!done)
 			System.out.println("No solution!");
 	}
 

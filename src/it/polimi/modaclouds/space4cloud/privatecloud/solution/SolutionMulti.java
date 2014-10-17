@@ -179,6 +179,9 @@ public class SolutionMulti implements Cloneable, Serializable {
 				String serviceName = tier.getAttribute("serviceName");
 				String serviceType = tier.getAttribute("serviceType");
 				
+				if (!serviceType.equals("Compute"))
+					continue;
+				
 				String region = getRegion(provider, tierId);
 				
 				Solution sol = add(provider, tierId, name, resourceName, serviceName, serviceType);
@@ -270,12 +273,14 @@ public class SolutionMulti implements Cloneable, Serializable {
 		return res;
 	}
 	
+//	@SuppressWarnings("unused")
 	public int getTotalTiers() {
 		int res = 0;
 		for (Solution s : solutions.values()) {
-			for (Tier t : s.tiers.values()) {
-				res++;
-			}
+			res += s.tiers.size();
+//			for (Tier t : s.tiers.values()) {
+//				res++;
+//			}
 		}
 		return res;
 	}

@@ -37,15 +37,17 @@ public class PrivateCloud {
 		}
 	}
 	
+	List<File> solutions = null;
+	
 	public void compute() {
 		Data.print(solution, hosts);
 		Run.print();
 		
 		SshConnector.run();
 		
-		Result.parse(solution, hosts);
+		solutions = Result.parse(solution, hosts);
 		
-//		cleanFiles();
+		cleanFiles();
 	}
 	
 	public void cleanFiles() {
@@ -59,16 +61,15 @@ public class PrivateCloud {
 		}
 	}
 	
-	public File getPrivateSolution() {
-		File f = null;
-		return f;
+	public List<File> getSolutions() {
+		return solutions;
 	}
 
-	public static File perform(String configurationFile, String solutionFile) {
+	public static List<File> perform(String configurationFile, String solutionFile) {
 		PrivateCloud pc = new PrivateCloud(configurationFile, solutionFile);
 		
 		pc.compute();
 		
-		return pc.getPrivateSolution();
+		return pc.getSolutions();
 	}
 }
