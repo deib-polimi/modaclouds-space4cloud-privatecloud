@@ -77,10 +77,10 @@ public class Result {
 			
 			for (Solution sol : solution.getAll()) {
 				for (Tier tier : sol.tiers.values()) {
-					Integer maxMachines = maxMachinesMap.get(tier.id);
+					Integer maxMachines = maxMachinesMap.get(tier.id + "@" + sol.providerName);
 					if (maxMachines == null) {
 						maxMachines = tier.getMaxMachines();
-						maxMachinesMap.put(tier.id, maxMachines);
+						maxMachinesMap.put(tier.id + "@" + sol.providerName, maxMachines);
 					}
 					for (int x = 0; x < maxMachines; ++x, ++i) {
 						if (v == i) {
