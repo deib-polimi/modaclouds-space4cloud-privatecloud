@@ -114,7 +114,8 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 
-		return -1;
+//		return -1;
+		return 0;
 
 	}
 	
