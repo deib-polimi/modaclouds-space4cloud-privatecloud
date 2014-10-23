@@ -47,8 +47,11 @@ public class PrivateCloud {
 		
 		solutions = Result.parse(solution, hosts);
 		
-		cleanFiles();
+		if (removeTempFiles)
+			cleanFiles();
 	}
+	
+	public static boolean removeTempFiles = true;
 	
 	public void cleanFiles() {
 		try {

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>it.polimi.modaclouds.space4cloud</groupId>
   <artifactId>privatecloud</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
   
   <licenses>
         <license>
@@ -105,7 +105,7 @@
                         <exclude>LICENSE.txt</exclude>
                     </excludes>
                 </configuration>
-                <executions>
+                <!--<executions>
                     <execution>
                         <id>check-headers</id>
                         <phase>verify</phase>
@@ -113,7 +113,7 @@
                             <goal>format</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions> -->
             </plugin>
     </plugins>
   </build>

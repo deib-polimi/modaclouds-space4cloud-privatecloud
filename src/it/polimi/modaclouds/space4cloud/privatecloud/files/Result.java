@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -62,6 +63,8 @@ public class Result {
 		return result.export();
 	}
 	
+	private HashMap<String, Integer> maxMachinesMap = new HashMap<String, Integer>();
+	
 	public void match(String s) {
 		if (Pattern.matches("X\\['v[0-9]+','h[0-9]+','t[0-9]+'\\] = 1", s)) {
 			String[] ss = s.split("'");
@@ -74,7 +77,12 @@ public class Result {
 			
 			for (Solution sol : solution.getAll()) {
 				for (Tier tier : sol.tiers.values()) {
-					for (int x = 0; x < tier.getMaxMachines(); ++x, ++i) {
+					Integer maxMachines = maxMachinesMap.get(tier.id);
+					if (maxMachines == null) {
+						maxMachines = tier.getMaxMachines();
+						maxMachinesMap.put(tier.id, maxMachines);
+					}
+					for (int x = 0; x < maxMachines; ++x, ++i) {
 						if (v == i) {
 							if (tier.machines[t].replicas <= 0)
 								return;
