@@ -1,6 +1,5 @@
 package it.polimi.modaclouds.space4cloud.privatecloud.files;
 
-import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 import it.polimi.modaclouds.space4cloud.privatecloud.Host;
 import it.polimi.modaclouds.space4cloud.privatecloud.solution.Solution;
 import it.polimi.modaclouds.space4cloud.privatecloud.solution.SolutionMulti;
@@ -19,10 +18,12 @@ import java.util.regex.Pattern;
 public class Result {
 	private SolutionMulti solution;
 	private List<Host> hosts;
+	private Path path;
 	
-	public Result(SolutionMulti solution, List<Host> hosts) {
+	public Result(SolutionMulti solution, List<Host> hosts, Path path) {
 		this.solution = solution;
 		this.hosts = hosts;
+		this.path = path;
 	}
 	
 	public void parse(String file) {
@@ -43,13 +44,13 @@ public class Result {
 	public List<File> export() {
 		ArrayList<File> files = new ArrayList<File>();
 		
-		Path p = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY, "solution-public.xml");
+		Path p = Paths.get(path.toString(), "solution-public.xml");
 		solution.exportLight(p);
 		files.add(p.toFile());
 		
 		int i = 1;
 		for (Host h : hosts) {
-			p = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY, "solution-private-h" + i++ + ".xml");
+			p = Paths.get(path.toString(), "solution-private-h" + i++ + ".xml");
 			h.allocatedSolutions.exportLight(p);
 			files.add(p.toFile());
 		}
@@ -57,8 +58,8 @@ public class Result {
 		return files;
 	}
 	
-	public static List<File> parse(SolutionMulti solution, List<Host> hosts) {
-		Result result = new Result(solution, hosts);
+	public static List<File> parse(SolutionMulti solution, List<Host> hosts, Path path) {
+		Result result = new Result(solution, hosts, path);
 		result.parse("rez.out");
 		return result.export();
 	}

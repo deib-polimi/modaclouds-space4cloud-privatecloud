@@ -9,6 +9,7 @@ import it.polimi.modaclouds.space4cloud.privatecloud.ssh.SshConnector;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -37,18 +38,30 @@ public class PrivateCloud {
 		}
 	}
 	
-	List<File> solutions = null;
+	private List<File> solutions = null;
 	
-	public void compute() {
+	public List<File> getSolutions(Path path) {
+		if (solutions != null)
+			return solutions;
+		
 		Data.print(solution, hosts);
 		Run.print();
 		
 		SshConnector.run();
 		
-		solutions = Result.parse(solution, hosts);
+		if (path == null)
+			path = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY);
+		
+		solutions = Result.parse(solution, hosts, path);
 		
 		if (removeTempFiles)
 			cleanFiles();
+		
+		return solutions;
+	}
+	
+	public List<File> getSolutions() {
+		return getSolutions(null);
 	}
 	
 	public static boolean removeTempFiles = true;
@@ -63,16 +76,14 @@ public class PrivateCloud {
 			e.printStackTrace();
 		}
 	}
-	
-	public List<File> getSolutions() {
-		return solutions;
-	}
 
-	public static List<File> perform(String configurationFile, String solutionFile) {
+	public static List<File> perform(String configurationFile, String solutionFile, String basePath) {
 		PrivateCloud pc = new PrivateCloud(configurationFile, solutionFile);
 		
-		pc.compute();
-		
-		return pc.getSolutions();
+		return pc.getSolutions(Paths.get(basePath));
+	}
+	
+	public static List<File> perform(String configurationFile, String solutionFile) {
+		return perform(configurationFile, solutionFile, null);
 	}
 }
