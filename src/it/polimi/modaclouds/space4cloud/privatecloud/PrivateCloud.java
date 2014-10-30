@@ -80,7 +80,15 @@ public class PrivateCloud {
 	public static List<File> perform(String configurationFile, String solutionFile, String basePath) {
 		PrivateCloud pc = new PrivateCloud(configurationFile, solutionFile);
 		
-		return pc.getSolutions(Paths.get(basePath));
+		Path path = null;
+		if (basePath != null && basePath.length() > 0) {
+			path = Paths.get(basePath);
+			if (!path.toFile().exists())
+				path = null;
+		}
+		
+		return pc.getSolutions(path);
+		
 	}
 	
 	public static List<File> perform(String configurationFile, String solutionFile) {
