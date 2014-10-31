@@ -7,8 +7,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
-		String configuration  = basePath + "conf-private-1p-microsoft.properties";
-		String solution       = basePath + "initial-solution-microsoft.xml";
+		String configuration  = basePath + "conf-private-1p.properties";
+		String solution       = basePath + "initial-solution-amazon.xml";
 		
 		PrivateCloud.removeTempFiles = false;
 		

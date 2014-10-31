@@ -1,0 +1,33 @@
+cd %s;
+reset;
+option log_file 'log.tmp';
+
+model %s;
+data %s;
+option solver '%s';
+option show_stats 1;
+option timelimit 720;
+option cplex_options 'timing=1';
+printf "SOLVING CLOUD BURSTING PROBLEM\n";
+solve;
+
+if (match (solve_message, "no feasible") > 0)|| (match (solve_message, "infeasible") > 0)  then {
+printf"Parameters are too stringent.  No feasible solution for the problem\n";
+printf"Analysis termination\n";
+}
+else printf("Solution Feasible!\n");
+
+display X > rez.out;
+display Y > rez.out;
+display Z > rez.out;
+display W > rez.out;
+display ALPHA > rez.out;
+display BETA > rez.out;
+display ActivationValue > rez.out;
+
+display {h in HOST, v in VM, t in TIME_INT: X[v,h,t] == 1}:
+	X[v,h,t] > rez.out;
+
+option log_file '';
+close rez.out;
+close log.tmp;

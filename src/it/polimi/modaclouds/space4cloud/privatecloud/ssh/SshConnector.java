@@ -26,6 +26,9 @@ public class SshConnector {
 		ScpTo newScpTo = new ScpTo();
 		newScpTo.sendfile(Configuration.RUN_DATA, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_DATA);
 		newScpTo.sendfile(Configuration.RUN_FILE, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_FILE);
+		
+//		newScpTo.sendfile(Configuration.DEFAULTS_BASH, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.DEFAULTS_BASH);
+		newScpTo.sendfile(Configuration.RUN_MODEL, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_MODEL);
 
 		// this block runs bash-script on AMPL server
 		ExecSSH newExecSSH = new ExecSSH();

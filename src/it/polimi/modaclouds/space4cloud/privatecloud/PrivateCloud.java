@@ -1,6 +1,7 @@
 package it.polimi.modaclouds.space4cloud.privatecloud;
 
 import it.polimi.modaclouds.space4cloud.privatecloud.files.Data;
+import it.polimi.modaclouds.space4cloud.privatecloud.files.Model;
 import it.polimi.modaclouds.space4cloud.privatecloud.files.Result;
 import it.polimi.modaclouds.space4cloud.privatecloud.files.Run;
 import it.polimi.modaclouds.space4cloud.privatecloud.solution.SolutionMulti;
@@ -46,6 +47,8 @@ public class PrivateCloud {
 		
 		Data.print(solution, hosts);
 		Run.print();
+		Model.print();
+//		Bash.print();
 		
 		SshConnector.run();
 		
@@ -70,6 +73,8 @@ public class PrivateCloud {
 		try {
 			Files.deleteIfExists(Paths.get(Configuration.RUN_FILE));
 			Files.deleteIfExists(Paths.get(Configuration.RUN_DATA));
+//			Files.deleteIfExists(Paths.get(Configuration.DEFAULTS_BASH));
+			Files.deleteIfExists(Paths.get(Configuration.RUN_MODEL));
 			Files.deleteIfExists(Paths.get("log.tmp"));
 			Files.deleteIfExists(Paths.get("rez.out"));
 		} catch (IOException e) {
