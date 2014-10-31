@@ -6,14 +6,10 @@ import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataHandler {
-	//	private static final Logger logger = LoggerHelper.getLogger(DataHandler.class);
-
-	private static final Logger logger=LoggerFactory.getLogger(DataHandler.class);
 	
 	/**
 	 * Instantiates a new data handler. it also charges data from the database
@@ -31,22 +27,31 @@ public class DataHandler {
 		}
 	}
 	
+	private Map<String, Integer> amountMemories = new HashMap<String, Integer>();
 	
 	public Integer getAmountMemory(String provider, String serviceName, String resourceName) {
+		String key = provider + "@" + serviceName + "@" + resourceName;
+		if (amountMemories.containsKey(key))
+			return amountMemories.get(key);
+		
+		Integer memory = 0; // -1
+		
 		try {
 			Connection db = DatabaseConnector.getConnection();
 			ResultSet rs = db.createStatement().executeQuery(String.format(QueryDictionary.Ram, provider, serviceName, resourceName));
 			
 			if (rs.next()) {
-				return rs.getInt(1) * rs.getInt(2);
+				memory = rs.getInt(1) * rs.getInt(2);
+				amountMemories.put(key, memory);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return -1;
-
+		return memory;
 	}
+	
+	private Map<String, Integer> numbersOfReplicas = new HashMap<String, Integer>();
 
 	/**
 	 * Gets the number of replicas.
@@ -60,20 +65,29 @@ public class DataHandler {
 	 * @return the number of replicas
 	 */
 	public Integer getNumberOfReplicas(String provider, String serviceName, String resourceName) {
+		String key = provider + "@" + serviceName + "@" + resourceName;
+		if (numbersOfReplicas.containsKey(key))
+			return numbersOfReplicas.get(key);
+		
+		Integer numberOfReplicas = 0; // -1
+		
 		try {
 			Connection db = DatabaseConnector.getConnection();
 			ResultSet rs = db.createStatement().executeQuery(String.format(QueryDictionary.CpuSpeedCores, provider, serviceName, resourceName));
 			
 			if (rs.next()) {
-				return rs.getInt(2);
+				numberOfReplicas = rs.getInt(2);
+				numbersOfReplicas.put(key, numberOfReplicas);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return -1;
+		return numberOfReplicas;
 
 	}
+	
+	private Map<String, Integer> processingRates = new HashMap<String, Integer>();
 
 	/**
 	 * Gets the processing rate of the cpus.
@@ -87,39 +101,62 @@ public class DataHandler {
 	 * @return the speed
 	 */
 	public Integer getProcessingRate(String provider, String serviceName, String resourceName) {
+		String key = provider + "@" + serviceName + "@" + resourceName;
+		if (processingRates.containsKey(key))
+			return processingRates.get(key);
+		
+		Integer processingRate = 0; // -1
+		
 		try {
 			Connection db = DatabaseConnector.getConnection();
 			ResultSet rs = db.createStatement().executeQuery(String.format(QueryDictionary.CpuSpeedCores, provider, serviceName, resourceName));
 			
 			if (rs.next()) {
-				return rs.getInt(1);
+				processingRate = rs.getInt(1);
+				processingRates.put(key, processingRate);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return -1;
+		return processingRate;
 
 	}
 	
+	private Map<String, Integer> storages = new HashMap<String, Integer>();
+	
 	public Integer getStorage(String provider, String serviceName, String resourceName) {
+		String key = provider + "@" + serviceName + "@" + resourceName;
+		if (storages.containsKey(key))
+			return storages.get(key);
+		
+		Integer storage = 0; // -1
+		
 		try {
 			Connection db = DatabaseConnector.getConnection();
 			ResultSet rs = db.createStatement().executeQuery(String.format(QueryDictionary.Storage, provider, serviceName, resourceName));
 			
 			if (rs.next()) {
-				return rs.getInt(1) * rs.getInt(2);
+				storage = rs.getInt(1) * rs.getInt(2);
+				storages.put(key, storage);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-//		return -1;
-		return 0;
+		return storage;
 
 	}
 	
+	private Map<String, Double> costs = new HashMap<String, Double>();
+	
 	public Double getCost(String provider, String serviceName, String resourceName, String region) {
+		String key = provider + "@" + serviceName + "@" + resourceName;
+		if (costs.containsKey(key))
+			return costs.get(key);
+		
+		Double cost = Double.MAX_VALUE; // -1.0
+		
 		String query = "";
 		if (region == null)
 			query = String.format(QueryDictionary.CostNoRegion, provider, serviceName, resourceName);
@@ -131,13 +168,14 @@ public class DataHandler {
 			ResultSet rs = db.createStatement().executeQuery(query);
 			
 			if (rs.next()) {
-				return rs.getDouble(1);
+				cost = rs.getDouble(1);
+				costs.put(key, cost);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		return -1.0;
+		
+		return cost;
 
 	}
 	
