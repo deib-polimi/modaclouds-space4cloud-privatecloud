@@ -4,8 +4,7 @@ import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class Run {
 	
@@ -16,16 +15,16 @@ public class Run {
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter(file));
 			
-//			String baseFile = ""; //new String(Files.readAllBytes(Paths.get(Configuration.DEFAULTS_FOLDER, Configuration.RUN_FILE))); //, Charset.defaultCharset()); // StandardCharsets.UTF_8);
+			String baseFile = ""; //new String(Files.readAllBytes(Paths.get(Configuration.DEFAULTS_FOLDER, Configuration.RUN_FILE))); //, Charset.defaultCharset()); // StandardCharsets.UTF_8);
 			
-			String baseFile = new String(Files.readAllBytes(Paths.get(this.getClass().getResource(Configuration.RUN_FILE).toURI())));
+//			String baseFile = new String(Files.readAllBytes(Paths.get(this.getClass().getResource(Configuration.RUN_FILE).toURI())));
 			
-//			Scanner sc = new Scanner(this.getClass().getResourceAsStream(Configuration.RUN_FILE));
-//			
-//			while (sc.hasNextLine())
-//				baseFile += sc.nextLine() + "\n";
-//			
-//			sc.close();
+			Scanner sc = new Scanner(this.getClass().getResourceAsStream(Configuration.RUN_FILE));
+			
+			while (sc.hasNextLine())
+				baseFile += sc.nextLine() + "\n";
+			
+			sc.close();
 			
 			out.printf(baseFile,
 					Configuration.RUN_WORKING_DIRECTORY,
