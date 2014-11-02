@@ -2,8 +2,11 @@ package it.polimi.modaclouds.space4cloud.privatecloud.files;
 
 import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
@@ -54,7 +57,14 @@ public class Run {
 			
 			String baseFile = ""; //new String(Files.readAllBytes(Paths.get(Configuration.DEFAULTS_FOLDER, Configuration.RUN_FILE))); //, Charset.defaultCharset()); // StandardCharsets.UTF_8);
 			
-			Scanner sc = new Scanner(Paths.get(Configuration.DEFAULTS_FOLDER, Configuration.RUN_FILE));
+			Path p = Paths.get(Configuration.DEFAULTS_FOLDER, Configuration.RUN_FILE);
+			InputStream is = this.getClass().getResourceAsStream(p.toString());
+			
+			if (is == null) {
+				is = new FileInputStream(p.toFile());
+			}
+			
+			Scanner sc = new Scanner(is);
 			
 			while (sc.hasNextLine())
 				baseFile += sc.nextLine() + "\n";

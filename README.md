@@ -12,14 +12,19 @@ The main class of this project is called `PrivateCloud`. Here is an example of h
 import it.polimi.modaclouds.space4clouds.privatecloud.PrivateCloud;
 public class Example {
     public static void main(String[] args) {
-        String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\";
-        String configuration  = basePath + "conf-optimization-private.properties";
-        String solution       = basePath + "OfBiz\\solution.xml";
+        String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\OfBiz\\";
+        String configuration  = basePath + "configuration.properties";
+        String solution       = basePath + "initial-solution.xml";
         
-        File f = PrivateCloud.perform(configuration, solution);
-        if (f != null && f.exists())
+        PrivateCloud.removeTempFiles = false;
+        
+        List<File> files = PrivateCloud.perform(configuration, solution);
+        boolean done = false;
+        for (File f : files) {
             System.out.println("Solution: " + f.getAbsolutePath());
-        else
+            done = true;
+        }
+        if (!done)
             System.out.println("No solution!");
     }
 }
@@ -31,7 +36,7 @@ To use this tool you need to add it as a maven dependency:
 
 * Group Id: it.polimi.modaclouds.space4cloud
 * Artifact Id: privatecloud
-* Version: 0.0.1-SNAPSHOT
+* Version: 0.0.9-SNAPSHOT
 * Type: jar
 * Scope: compile.
 
