@@ -40,7 +40,6 @@ public class Configuration {
 	public static String RUN_SOLVER = "/usr/optimization/CPLEX_Studio_Preview126/cplex/bin/x86-64_linux/cplexamp";
 	
 	public static String DEFAULTS_BASH = "bash.run";
-	public static String DEFAULTS_FOLDER = "files";
 	
 	public static void saveConfiguration(String filePath) throws IOException{
 		FileOutputStream fos = new FileOutputStream(filePath);
@@ -70,7 +69,6 @@ public class Configuration {
 		prop.put("RUN_FILE", RUN_FILE);
 		
 		prop.put("DEFAULTS_BASH", DEFAULTS_BASH);
-		prop.put("DEFAULTS_FOLDER", DEFAULTS_FOLDER);
 		
 		prop.store(fos, "S4C-PrivateCloud configuration properties");
 		fos.flush();
@@ -104,6 +102,5 @@ public class Configuration {
 		RUN_FILE = prop.getProperty("RUN_FILE", RUN_FILE);
 		
 		DEFAULTS_BASH = prop.getProperty("DEFAULTS_BASH", DEFAULTS_BASH);
-		DEFAULTS_FOLDER = prop.getProperty("DEFAULTS_FOLDER", DEFAULTS_FOLDER);
 	}
 }
