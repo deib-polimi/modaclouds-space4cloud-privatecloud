@@ -36,8 +36,8 @@ public class SshConnector {
 
 		// this block downloads logs and results of AMPL
 		ScpFrom newScpFrom = new ScpFrom();
-		newScpFrom.receivefile("log.tmp", Configuration.RUN_WORKING_DIRECTORY + "/log.tmp");
-		newScpFrom.receivefile("rez.out", Configuration.RUN_WORKING_DIRECTORY + "/rez.out");
+		newScpFrom.receivefile(Configuration.RUN_LOG, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_LOG);
+		newScpFrom.receivefile(Configuration.RUN_RES, Configuration.RUN_WORKING_DIRECTORY + "/" + Configuration.RUN_RES);
 	}
 
 }

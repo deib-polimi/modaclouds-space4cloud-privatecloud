@@ -39,6 +39,10 @@ public class Configuration {
 	public static String RUN_DATA = "data.dat";
 	public static String RUN_SOLVER = "/usr/optimization/CPLEX_Studio_Preview126/cplex/bin/x86-64_linux/cplexamp";
 	
+	// TODO: usarli!
+	public static String RUN_LOG = "log.tmp";
+	public static String RUN_RES = "rez.out";
+	
 	public static String DEFAULTS_BASH = "bash.run";
 	
 	public static void saveConfiguration(String filePath) throws IOException{
@@ -53,6 +57,7 @@ public class Configuration {
 		prop.put("RESOURCE_ENVIRONMENT_EXTENSION", RESOURCE_ENVIRONMENT_EXTENSION);
 		prop.put("CONSTRAINTS", CONSTRAINTS);
 		prop.put("PROJECT_BASE_FOLDER", PROJECT_BASE_FOLDER);
+		prop.put("WORKING_DIRECTORY", WORKING_DIRECTORY);
 		prop.put("DB_CONNECTION_FILE", DB_CONNECTION_FILE);
 		
 		prop.put("SSH_HOST", SSH_HOST);
@@ -67,6 +72,8 @@ public class Configuration {
 		prop.put("RUN_DATA", RUN_DATA);
 		prop.put("RUN_SOLVER", RUN_SOLVER);
 		prop.put("RUN_FILE", RUN_FILE);
+		prop.put("RUN_LOG", RUN_LOG);
+		prop.put("RUN_RES", RUN_RES);
 		
 		prop.put("DEFAULTS_BASH", DEFAULTS_BASH);
 		
@@ -87,6 +94,7 @@ public class Configuration {
 		RESOURCE_ENVIRONMENT_EXTENSION = prop.getProperty("RESOURCE_ENVIRONMENT_EXTENSION", RESOURCE_ENVIRONMENT_EXTENSION);
 		CONSTRAINTS = prop.getProperty("CONSTRAINTS", CONSTRAINTS);
 		PROJECT_BASE_FOLDER = prop.getProperty("PROJECT_BASE_FOLDER", PROJECT_BASE_FOLDER);
+		WORKING_DIRECTORY = prop.getProperty("WORKING_DIRECTORY", WORKING_DIRECTORY);
 		DB_CONNECTION_FILE= prop.getProperty("DB_CONNECTION_FILE", DB_CONNECTION_FILE);
 		SSH_PASSWORD = prop.getProperty("SSH_PASSWORD", SSH_PASSWORD);
 		SSH_USER_NAME = prop.getProperty("SSH_USER_NAME", SSH_USER_NAME);
@@ -100,6 +108,8 @@ public class Configuration {
 		RUN_DATA = prop.getProperty("RUN_DATA", RUN_DATA);
 		RUN_SOLVER = prop.getProperty("RUN_SOLVER", RUN_SOLVER);
 		RUN_FILE = prop.getProperty("RUN_FILE", RUN_FILE);
+		RUN_LOG = prop.getProperty("RUN_LOG", RUN_LOG);
+		RUN_RES = prop.getProperty("RUN_RES", RUN_RES);
 		
 		DEFAULTS_BASH = prop.getProperty("DEFAULTS_BASH", DEFAULTS_BASH);
 	}

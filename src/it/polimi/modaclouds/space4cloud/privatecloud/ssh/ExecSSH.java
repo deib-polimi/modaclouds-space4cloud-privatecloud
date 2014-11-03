@@ -67,7 +67,7 @@ public class ExecSSH {
 			Channel channel = session.openChannel("exec");
 			// sending command which runs bash-script in UploadPath directory
 			((ChannelExec) channel).setCommand("bash " + Configuration.RUN_WORKING_DIRECTORY + "/"
-					+ "bash.run");
+					+ Configuration.DEFAULTS_BASH);
 			// taking input stream
 			channel.setInputStream(null);
 			((ChannelExec) channel).setErrStream(System.err);

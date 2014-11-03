@@ -209,7 +209,13 @@ public class Data {
 								else if (t1.providerName.equals(t2.providerName)) {
 									ratio = ((double)t2.machines[h].replicas) / t1.machines[h].replicas;
 								}
-								out.printf("\nr%s r%s t%s %s", tierFormatter.format(w1), tierFormatter.format(w2), timeIntFormatter.format(h+1), doubleFormatter.format(ratio));
+								
+								int iRatio = (int)Math.round(ratio);
+								if (iRatio == 0)
+									iRatio = 1;
+								
+//								out.printf("\nr%s r%s t%s %s", tierFormatter.format(w1), tierFormatter.format(w2), timeIntFormatter.format(h+1), doubleFormatter.format(ratio));
+								out.printf("\nr%s r%s t%s %d", tierFormatter.format(w1), tierFormatter.format(w2), timeIntFormatter.format(h+1), iRatio);
 							}
 							w2++;
 						}
