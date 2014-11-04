@@ -10,7 +10,7 @@ public class Bash {
 	public boolean print(String file) {
 		
 		try {
-			Files.copy(this.getClass().getResourceAsStream(Configuration.DEFAULTS_BASH), Paths.get(file));
+			Files.copy(this.getClass().getResourceAsStream(Configuration.DEFAULTS_BASH), Paths.get(file), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			return false;
 		}
