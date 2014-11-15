@@ -42,17 +42,12 @@ public class PrivateCloud {
 		}
 	}
 	
-	private static String date = null;
-	
 	public static String getDate() {
-		if (date != null)
-			return date;
-		
 		Calendar c = Calendar.getInstance();
 		
 		DecimalFormat f = new DecimalFormat("00");
 		
-		date = String.format("%d%s%s-%s%s%s",
+		return String.format("%d%s%s-%s%s%s",
 				c.get(Calendar.YEAR),
 				f.format(c.get(Calendar.MONTH) + 1),
 				f.format(c.get(Calendar.DAY_OF_MONTH)),
@@ -60,8 +55,6 @@ public class PrivateCloud {
 				f.format(c.get(Calendar.MINUTE)),
 				f.format(c.get(Calendar.SECOND))
 				);
-		
-		return date;
 	}
 	
 	private List<File> solutions = null;
