@@ -3,3 +3,8 @@
 .DS_Store
 /target
 /src/META-INF/*
+/AMPL.run
+/data.dat
+/log.tmp
+/modelbursting.mod
+/rez.out
