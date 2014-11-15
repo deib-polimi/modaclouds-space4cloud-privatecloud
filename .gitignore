@@ -4,3 +4,8 @@
 /target
 /src/META-INF/*
 /bin
+/AMPL.run
+/data.dat
+/log.tmp
+/modelbursting.mod
+/rez.out
