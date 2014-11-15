@@ -32,6 +32,12 @@ public class ExecSSH {
 	// main execution function
 	// returns in List<Strings> all answers of the server
 	public List<String> mainExec() {
+		return mainExec("bash " + Configuration.RUN_WORKING_DIRECTORY + "/"
+					+ Configuration.DEFAULTS_BASH);
+	}
+	
+	
+	public List<String> mainExec(String command) {
 		List<String> res = new ArrayList<String>();
 		try {
 			// creating session with username, server's address and port (22 by
@@ -66,8 +72,7 @@ public class ExecSSH {
 			// creating channel in execution mod
 			Channel channel = session.openChannel("exec");
 			// sending command which runs bash-script in UploadPath directory
-			((ChannelExec) channel).setCommand("bash " + Configuration.RUN_WORKING_DIRECTORY + "/"
-					+ Configuration.DEFAULTS_BASH);
+			((ChannelExec) channel).setCommand(command);
 			// taking input stream
 			channel.setInputStream(null);
 			((ChannelExec) channel).setErrStream(System.err);

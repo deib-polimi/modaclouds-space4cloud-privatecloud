@@ -1,6 +1,6 @@
 cd %s;
 reset;
-option log_file 'log.tmp';
+option log_file '%s';
 
 model %s;
 data %s;
@@ -17,17 +17,17 @@ printf"Analysis termination\n";
 }
 else printf("Solution Feasible!\n");
 
-display X > rez.out;
-display Y > rez.out;
-display Z > rez.out;
-display W > rez.out;
-display ALPHA > rez.out;
-display BETA > rez.out;
-display ActivationValue > rez.out;
+display X > %6$s;
+display Y > %6$s;
+display Z > %6$s;
+display W > %6$s;
+display ALPHA > %6$s;
+display BETA > %6$s;
+display ActivationValue > %6$s;
 
 display {h in HOST, v in VM, t in TIME_INT: X[v,h,t] == 1}:
 	X[v,h,t] > rez.out;
 
 option log_file '';
-close rez.out;
-close log.tmp;
+close %6$s;
+close %2$s;

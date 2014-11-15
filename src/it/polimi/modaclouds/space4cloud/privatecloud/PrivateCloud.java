@@ -1,5 +1,6 @@
 package it.polimi.modaclouds.space4cloud.privatecloud;
 
+import it.polimi.modaclouds.space4cloud.privatecloud.files.Bash;
 import it.polimi.modaclouds.space4cloud.privatecloud.files.Data;
 import it.polimi.modaclouds.space4cloud.privatecloud.files.Model;
 import it.polimi.modaclouds.space4cloud.privatecloud.files.Result;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.List;
 
 public class PrivateCloud {
@@ -39,16 +42,40 @@ public class PrivateCloud {
 		}
 	}
 	
+	private static String date = null;
+	
+	public static String getDate() {
+		if (date != null)
+			return date;
+		
+		Calendar c = Calendar.getInstance();
+		
+		DecimalFormat f = new DecimalFormat("00");
+		
+		date = String.format("%d%s%s-%s%s%s",
+				c.get(Calendar.YEAR),
+				f.format(c.get(Calendar.MONTH) + 1),
+				f.format(c.get(Calendar.DAY_OF_MONTH)),
+				f.format(c.get(Calendar.HOUR_OF_DAY)),
+				f.format(c.get(Calendar.MINUTE)),
+				f.format(c.get(Calendar.SECOND))
+				);
+		
+		return date;
+	}
+	
 	private List<File> solutions = null;
 	
 	public List<File> getSolutions(Path path) {
 		if (solutions != null)
 			return solutions;
 		
+		Configuration.RUN_WORKING_DIRECTORY += "/" + getDate();
+		
 		Data.print(solution, hosts);
 		Run.print();
 		Model.print();
-//		Bash.print();
+		Bash.print();
 		
 		SshConnector.run();
 		
@@ -73,10 +100,10 @@ public class PrivateCloud {
 		try {
 			Files.deleteIfExists(Paths.get(Configuration.RUN_FILE));
 			Files.deleteIfExists(Paths.get(Configuration.RUN_DATA));
-//			Files.deleteIfExists(Paths.get(Configuration.DEFAULTS_BASH));
+			Files.deleteIfExists(Paths.get(Configuration.DEFAULTS_BASH));
 			Files.deleteIfExists(Paths.get(Configuration.RUN_MODEL));
-			Files.deleteIfExists(Paths.get("log.tmp"));
-			Files.deleteIfExists(Paths.get("rez.out"));
+			Files.deleteIfExists(Paths.get(Configuration.RUN_LOG));
+			Files.deleteIfExists(Paths.get(Configuration.RUN_RES));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

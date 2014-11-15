@@ -28,9 +28,11 @@ public class Run {
 			
 			out.printf(baseFile,
 					Configuration.RUN_WORKING_DIRECTORY,
+					Configuration.RUN_LOG,
 					Configuration.RUN_MODEL,
 					Configuration.RUN_DATA,
-					Configuration.RUN_SOLVER
+					Configuration.RUN_SOLVER,
+					Configuration.RUN_RES
 					);
 			
 			out.flush();
