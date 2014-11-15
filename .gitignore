@@ -3,3 +3,4 @@
 .DS_Store
 /target
 /src/META-INF/*
+/bin
