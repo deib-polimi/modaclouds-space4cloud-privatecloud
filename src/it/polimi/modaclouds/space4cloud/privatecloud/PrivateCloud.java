@@ -63,7 +63,7 @@ public class PrivateCloud {
 		if (solutions != null)
 			return solutions;
 		
-		Configuration.RUN_WORKING_DIRECTORY += "/" + getDate();
+		Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + "/" + getDate();
 		
 		Data.print(solution, hosts);
 		Run.print();

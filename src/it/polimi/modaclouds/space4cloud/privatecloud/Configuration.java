@@ -33,7 +33,8 @@ public class Configuration {
 	public static String PRIVATE_CLOUD_HOSTS;
 	
 	// Information used in the AMPL.run file
-	public static String RUN_WORKING_DIRECTORY = "/home/s4c/new64";
+	public static String DEFAULTS_WORKING_DIRECTORY = "/home/s4c/new64"; //upload directory on AMPL server
+	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
 	public static String RUN_FILE = "AMPL.run";
 	public static String RUN_MODEL = "modelbursting.mod";
 	public static String RUN_DATA = "data.dat";
