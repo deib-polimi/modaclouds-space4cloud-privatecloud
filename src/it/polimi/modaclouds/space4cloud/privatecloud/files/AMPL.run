@@ -26,7 +26,10 @@ display BETA > %6$s;
 display ActivationValue > %6$s;
 
 display {h in HOST, v in VM, t in TIME_INT: X[v,h,t] == 1}:
-	X[v,h,t] > rez.out;
+	X[v,h,t] > %6$s;
+	
+display {v in VM, t in TIME_INT: sum {h in HOST} X[v,h,t] + W[v,t] > ActivationValue[v, t]}:
+    W[v,t] > %6$s;
 
 option log_file '';
 close %6$s;

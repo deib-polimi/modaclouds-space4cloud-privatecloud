@@ -26,8 +26,8 @@ public class Main {
 	
 	public static void mainConstellation(String[] args) {
 		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
-		String configuration  = basePath + "conference-opt-bad.properties";
-		String solution       = basePath + "solution-bad.xml";
+		String configuration  = basePath + "test.properties";
+		String solution       = basePath + "testSolution.xml";
 
 		
 		PrivateCloud.removeTempFiles = false;

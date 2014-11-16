@@ -98,6 +98,30 @@ public class Result {
 					}
 				}
 			}
+		} else if (Pattern.matches("W\\['v[0-9]+','t[0-9]+'\\] = 1", s)) {
+			String[] ss = s.split("'");
+			
+			int v = Integer.parseInt(ss[1].substring(1)) - 1;
+			int t = Integer.parseInt(ss[3].substring(1)) - 1;
+			
+			int i = 0;
+			
+			for (Solution sol : solution.getAll()) {
+				for (Tier tier : sol.tiers.values()) {
+					Integer maxMachines = maxMachinesMap.get(tier.id + "@" + sol.providerName);
+					if (maxMachines == null) {
+						maxMachines = tier.getMaxMachines();
+						maxMachinesMap.put(tier.id + "@" + sol.providerName, maxMachines);
+					}
+					for (int x = 0; x < maxMachines; ++x, ++i) {
+						if (v == i) {
+							tier.machines[t].replicas++;
+							
+							return;
+						}
+					}
+				}
+			}
 		}
 	}
 }

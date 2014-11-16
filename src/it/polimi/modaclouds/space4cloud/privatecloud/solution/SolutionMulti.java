@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +67,7 @@ public class SolutionMulti implements Cloneable, Serializable {
 	}
 	
 	// The keys are the providers name, the allocations object are the allocations for each hour.
-	private Map<String, Solution> solutions = new HashMap<String, Solution>();
+	private Map<String, Solution> solutions = new LinkedHashMap<String, Solution>();
 	
 	public int size() {
 		return solutions.keySet().size();

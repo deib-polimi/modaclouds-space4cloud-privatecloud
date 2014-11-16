@@ -1,6 +1,6 @@
 package it.polimi.modaclouds.space4cloud.privatecloud.solution;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Solution {
@@ -9,6 +9,6 @@ public class Solution {
 	
 	public Solution(String providerName) {
 		this.providerName = providerName;
-		tiers = new HashMap<String, Tier>();
+		tiers = new LinkedHashMap<String, Tier>();
 	}
 }
