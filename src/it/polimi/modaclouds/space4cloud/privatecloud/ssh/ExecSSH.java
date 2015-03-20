@@ -18,7 +18,9 @@ package it.polimi.modaclouds.space4cloud.privatecloud.ssh;
 
 import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,11 @@ import com.jcraft.jsch.Session;
 
 //this class allows to execute commands on AMPL server
 public class ExecSSH {
+	
 	public List<String> mainExec(String command) {
+		if (Configuration.isRunningLocally())
+			return localExec(command);
+		
 		List<String> res = new ArrayList<String>();
 		try {
 			// creating session with username, server's address and port (22 by
@@ -96,6 +102,25 @@ public class ExecSSH {
 			channel.disconnect();
 			session.disconnect();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	public List<String> localExec(String command) {
+		List<String> res = new ArrayList<String>();
+		ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+		pb.redirectErrorStream(true);
+		try {
+			Process p = pb.start();
+			BufferedReader stream = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = stream.readLine(); 
+			while (line != null) {
+				res.add(line);
+				line = stream.readLine();
+			}
+			stream.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

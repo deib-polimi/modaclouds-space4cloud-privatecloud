@@ -1,47 +1,71 @@
 %%arg -solver %s
 %%arg -solutionAscii %s
-%%display var AmountVM* PartialArrRate*
+%%display var X* W* ActivationValue*
 %%display ignoreCons
 %%display nonZeros
 %%opt cplex threads %4$d
 %%opt cbc threads %4$d
 %%opt glpk threads %4$d
 
-%%data %s : CONTAINER set, PROVIDER set, CLASS_REQUEST set, TYPE_VM set, TIME_INT set, COMPONENT set, ProbabilityToBeInComponent[CLASS_REQUEST, COMPONENT], ArrRate[TIME_INT], MaximumSR[CLASS_REQUEST, COMPONENT], Alpha[CLASS_REQUEST], Speed[TYPE_VM, PROVIDER, CONTAINER], Cost[TYPE_VM, PROVIDER, CONTAINER], MaxResponseTime[CLASS_REQUEST, COMPONENT], MinProv, MaxVMPerContainer, MinArrRate[PROVIDER], PartitionComponents[COMPONENT, CONTAINER], Availability[PROVIDER], MaxUnavailability
+%%data %s : TIME_INT set, VM set, HOST set, TIER set, RAMHost[HOST], CPUCoreHost[HOST], DensityHost[HOST], CPUSpeedHost[HOST], StorageHost[HOST], CostHost[HOST,TIME_INT], RAMVm[VM], CPUCoreVm[VM], CPUSpeedVm[VM], StorageVm[VM], CostVm[VM,TIME_INT], ActivationValue[VM,TIME_INT], BelongsVm[VM,TIER], TierRatio[TIER,TIER,TIME_INT]
 
 variables:
-  X[PROVIDER]: binary;
-  W[TYPE_VM, PROVIDER, CONTAINER]: binary;
-  PartialArrRate[PROVIDER, TIME_INT]: real[0..];
-  AmountVM[TYPE_VM, PROVIDER, CONTAINER, TIME_INT]: integer[0..];
+  X[VM, HOST, TIME_INT]: binary;
+  Y[VM, HOST]: binary;
+  Z[HOST, TIME_INT]: binary;
+  W[VM, TIME_INT]: binary;
+  ALPHA[TIME_INT]: binary;
+  GAMMA[TIME_INT]: binary;
+  BETA[TIER, TIME_INT]: integer[0..];
 
 objectives:
-  Total_Cost: sum{t in TIME_INT, p in PROVIDER, i in CONTAINER, v in TYPE_VM: Cost[v, p, i]*AmountVM[v, p, i, t]}->min;
+  Total_Cost: sum{h in HOST, t in TIME_INT: (CostHost[h, t]*Z[h, t])} + sum{v in VM, t in TIME_INT: (CostVm[v, t]*W[v, t])} ->min;
 
 constraints:
-  #TotalNumberOfProviders
-  sum{p in PROVIDER: X[p]} >= MinProv;
-
-  #ArrRatePerProvider1
-  {p in PROVIDER, t in TIME_INT: X[p]*MinArrRate[p]*ArrRate[t] <= PartialArrRate[p, t];}
-
-  #ArrRatePerProvider2
-  {p in PROVIDER, t in TIME_INT: PartialArrRate[p, t] <= X[p]*ArrRate[t];}
-
-  #Efficiency
-  {t in TIME_INT: sum{p in PROVIDER:PartialArrRate[p, t]} = ArrRate[t];}
-
-  #Select_Types
-  {p in PROVIDER, i in CONTAINER: sum{v in TYPE_VM: W[v, p, i]} = X[p];}
-
-  #VMAmount
-  {v in TYPE_VM, p in PROVIDER, i in CONTAINER, t in TIME_INT: W[v, p, i] <= AmountVM[v, p, i, t];}
-
-  #VMAmount2
-  {v in TYPE_VM, p in PROVIDER, i in CONTAINER, t in TIME_INT: AmountVM[v, p, i, t] <= MaxVMPerContainer*W[v, p, i];}
-
-  #Response_Time
-  {k in CLASS_REQUEST, p in PROVIDER, i in CONTAINER, t in TIME_INT, c in COMPONENT, ProbabilityToBeInComponent[k,c]*PartitionComponents[c,i]>0: sum{d in CLASS_REQUEST, g in COMPONENT, ProbabilityToBeInComponent[d,g]*PartitionComponents[g, i]>0: (Alpha[d]*ProbabilityToBeInComponent[d, g]/MaximumSR[d, g])*PartialArrRate[p, t]*MaximumSR[k, c]*MaxResponseTime[k, c]}+ sum{v in TYPE_VM: AmountVM[v, p, i, t]} <= sum{v in TYPE_VM:AmountVM[v, p, i, t]*Speed[v, p, i]*MaximumSR[k, c]*MaxResponseTime[k, c]};}
-
-  #AvailabilityConstraint
-  sum{p in PROVIDER: lg(1 - Availability[p]) * X[p]} <= lg(MaxUnavailability);
+  #C2
+  {v in VM, h in HOST, t in TIME_INT: X[v, h, t] <= Y[v, h];}
+  
+  #C3_EachVmOnMaxOneHost
+  {v in VM: sum{h in HOST: (Y[v, h])} <= 1;}
+  
+  #C4_HostOnIfVmRunning
+  {v in VM, h in HOST, t in TIME_INT: X[v, h, t] <= Z[h, t];}
+  
+  #C5_VmConsideredOnlyIfRunning
+  {v in VM, h in HOST, t in TIME_INT: X[v, h, t] <= ActivationValue[v, t];}
+  
+  #C6_VmEitherPublicOrPrivate
+  {v in VM, t in TIME_INT: sum{h in HOST: (X[v, h, t])} + W[v, t] >= ActivationValue[v, t];}
+  
+  #C9_TotalRam
+  {h in HOST, t in TIME_INT: sum{v in VM: (RAMVm[v]*X[v, h, t])} <= RAMHost[h];}
+  
+  #C10_TotalCore
+  {h in HOST, t in TIME_INT: sum{v in VM: (CPUCoreVm[v]*X[v, h, t])} <= CPUCoreHost[h]*DensityHost[h];}
+  
+  #C11_TotalSpeed
+  {h in HOST, t in TIME_INT: sum{v in VM: (CPUCoreVm[v]*CPUSpeedVm[v]*X[v, h, t])} <= CPUCoreHost[h]*CPUSpeedHost[h]*DensityHost[h];}
+  
+  #C12
+  {v in VM, h in HOST, t in TIME_INT: CPUSpeedVm[v]*X[v, h, t] <= CPUSpeedHost[h];}
+  
+  #C13_TotalStorage
+  {h in HOST, t in TIME_INT: sum{v in VM: (StorageVm[v]*X[v, h, t])} <= StorageHost[h]*DensityHost[h];}
+  
+  #C14
+  {v in VM, r in TIER, t in TIME_INT: W[v, t]*BelongsVm[v, r] <= ALPHA[t];}
+  
+  #C15
+  {r in TIER, t in TIME_INT: ALPHA[t] <= sum{v in VM: (W[v, t]*BelongsVm[v, r])};}
+  
+  #C16
+  {r in TIER, t in TIME_INT: BETA[r, t] = sum{v in VM: (W[v, t]*BelongsVm[v, r])};}
+  
+  #C17
+  {r1 in TIER, r2 in TIER, t in TIME_INT: TierRatio[r1, r2, t]*BETA[r1, t] >= BETA[r2, t];}
+  
+  #C7
+  {r in TIER, t in TIME_INT: GAMMA[t] <= sum{v in VM: sum{h in HOST: (X[v,h, t]*BelongsVm[v, r])}};}
+  
+  #C8
+  {v in VM, r in TIER, t in TIME_INT: GAMMA[t] >= sum{h in HOST: (X[v,h, t]*BelongsVm[v, r])};}
