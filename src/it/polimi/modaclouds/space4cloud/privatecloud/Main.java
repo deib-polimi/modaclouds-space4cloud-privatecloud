@@ -14,14 +14,18 @@ public class Main {
 		
 		PrivateCloud.removeTempFiles = false;
 		
-		List<File> files = PrivateCloud.perform(configuration, solution);
-		boolean done = false;
-		for (File f : files) {
-			System.out.println("Solution: " + f.getAbsolutePath());
-			done = true;
+		try {
+			List<File> files = PrivateCloud.perform(configuration, solution);
+			boolean done = false;
+			for (File f : files) {
+				System.out.println("Solution: " + f.getAbsolutePath());
+				done = true;
+			}
+			if (!done)
+				System.out.println("No solution!");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		if (!done)
-			System.out.println("No solution!");
 	}
 	
 	public static void mainConstellation(String[] args) {
@@ -32,14 +36,18 @@ public class Main {
 		
 		PrivateCloud.removeTempFiles = false;
 		
-		List<File> files = PrivateCloud.perform(configuration, solution);
-		boolean done = false;
-		for (File f : files) {
-			System.out.println("Solution: " + f.getAbsolutePath());
-			done = true;
+		try {
+			List<File> files = PrivateCloud.perform(configuration, solution);
+			boolean done = false;
+			for (File f : files) {
+				System.out.println("Solution: " + f.getAbsolutePath());
+				done = true;
+			}
+			if (!done)
+				System.out.println("No solution!");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		if (!done)
-			System.out.println("No solution!");
 	}
 	
 	public static void main(String[] args) {

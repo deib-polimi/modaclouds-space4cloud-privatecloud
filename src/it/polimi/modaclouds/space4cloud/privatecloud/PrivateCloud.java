@@ -59,23 +59,35 @@ public class PrivateCloud {
 	
 	private List<File> solutions = null;
 	
-	public List<File> getSolutions(Path path) {
+	public List<File> getSolutions(Path path) throws PrivateCloudException {
 		if (solutions != null)
 			return solutions;
 		
 		Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + "/" + getDate();
 		
-		Data.print(solution, hosts);
-		Run.print();
-		Model.print();
-		Bash.print();
+		try {
+			Data.print(solution, hosts);
+			Run.print();
+			Model.print();
+			Bash.print();
+		} catch (Exception e) {
+			throw new PrivateCloudException("Error when creating the problem files.", e);
+		}
 		
-		SshConnector.run();
+		try {
+			SshConnector.run();
+		} catch (Exception e) {
+			throw new PrivateCloudException("Error when sending or receiving file or when executing the script.", e);
+		}
 		
 		if (path == null)
 			path = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY);
 		
-		solutions = Result.parse(solution, hosts, path);
+		try {
+			solutions = Result.parse(solution, hosts, path);
+		} catch (Exception e) {
+			throw new PrivateCloudException("Error when parsing the solution.", e);
+		}
 		
 		if (removeTempFiles)
 			cleanFiles();
@@ -83,7 +95,7 @@ public class PrivateCloud {
 		return solutions;
 	}
 	
-	public List<File> getSolutions() {
+	public List<File> getSolutions() throws PrivateCloudException {
 		return getSolutions(null);
 	}
 	
@@ -102,7 +114,7 @@ public class PrivateCloud {
 		}
 	}
 
-	public static List<File> perform(String configurationFile, String solutionFile, String basePath) {
+	public static List<File> perform(String configurationFile, String solutionFile, String basePath) throws PrivateCloudException {
 		PrivateCloud pc = new PrivateCloud(configurationFile, solutionFile);
 		
 		Path path = null;
@@ -116,7 +128,7 @@ public class PrivateCloud {
 		
 	}
 	
-	public static List<File> perform(String configurationFile, String solutionFile) {
+	public static List<File> perform(String configurationFile, String solutionFile) throws PrivateCloudException {
 		return perform(configurationFile, solutionFile, null);
 	}
 }
