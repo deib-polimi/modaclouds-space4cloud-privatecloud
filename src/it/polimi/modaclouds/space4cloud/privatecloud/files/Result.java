@@ -1,9 +1,8 @@
 package it.polimi.modaclouds.space4cloud.privatecloud.files;
 
+import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 import it.polimi.modaclouds.space4cloud.privatecloud.Host;
-import it.polimi.modaclouds.space4cloud.privatecloud.solution.Solution;
 import it.polimi.modaclouds.space4cloud.privatecloud.solution.SolutionMulti;
-import it.polimi.modaclouds.space4cloud.privatecloud.solution.Tier;
 
 import java.io.File;
 import java.io.FileReader;
@@ -13,11 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
-public class Result {
-	private SolutionMulti solution;
-	private List<Host> hosts;
+public abstract class Result {
+	protected SolutionMulti solution;
+	protected List<Host> hosts;
 	private Path path;
 	
 	public Result(SolutionMulti solution, List<Host> hosts, Path path) {
@@ -59,69 +57,19 @@ public class Result {
 	}
 	
 	public static List<File> parse(SolutionMulti solution, List<Host> hosts, Path path) {
-		Result result = new Result(solution, hosts, path);
-		result.parse("rez.out");
-		return result.export();
-	}
-	
-	private HashMap<String, Integer> maxMachinesMap = new HashMap<String, Integer>();
-	
-	public void match(String s) {
-		if (Pattern.matches("X\\['v[0-9]+','h[0-9]+','t[0-9]+'\\] = 1", s)) {
-			String[] ss = s.split("'");
-			
-			int v = Integer.parseInt(ss[1].substring(1)) - 1;
-			int h = Integer.parseInt(ss[3].substring(1)) - 1;
-			int t = Integer.parseInt(ss[5].substring(1)) - 1;
-			
-			int i = 0;
-			
-			for (Solution sol : solution.getAll()) {
-				for (Tier tier : sol.tiers.values()) {
-					Integer maxMachines = maxMachinesMap.get(tier.id + "@" + sol.providerName);
-					if (maxMachines == null) {
-						maxMachines = tier.getMaxMachines();
-						maxMachinesMap.put(tier.id + "@" + sol.providerName, maxMachines);
-					}
-					for (int x = 0; x < maxMachines; ++x, ++i) {
-						if (v == i) {
-							if (tier.machines[t].replicas <= 0)
-								return;
-							
-							tier.machines[t].replicas--;
-							
-							Host host = hosts.get(h);
-							host.addMachine(tier, t);
-							
-							return;
-						}
-					}
-				}
-			}
-		} else if (Pattern.matches("W\\['v[0-9]+','t[0-9]+'\\] = 1", s)) {
-			String[] ss = s.split("'");
-			
-			int v = Integer.parseInt(ss[1].substring(1)) - 1;
-			int t = Integer.parseInt(ss[3].substring(1)) - 1;
-			
-			int i = 0;
-			
-			for (Solution sol : solution.getAll()) {
-				for (Tier tier : sol.tiers.values()) {
-					Integer maxMachines = maxMachinesMap.get(tier.id + "@" + sol.providerName);
-					if (maxMachines == null) {
-						maxMachines = tier.getMaxMachines();
-						maxMachinesMap.put(tier.id + "@" + sol.providerName, maxMachines);
-					}
-					for (int x = 0; x < maxMachines; ++x, ++i) {
-						if (v == i) {
-							tier.machines[t].replicas++;
-							
-							return;
-						}
-					}
-				}
-			}
+		List<File> f = null;
+		switch (Configuration.MATH_SOLVER) {
+		case AMPL:
+			f = ResultAMPL.parse(solution, hosts, path);
+			break;
+		case CMPL:
+			f = ResultCMPL.parse(solution, hosts, path);
+			break;
 		}
+		return f;
 	}
+	
+	protected HashMap<String, Integer> maxMachinesMap = new HashMap<String, Integer>();
+	
+	public abstract void match(String s);
 }

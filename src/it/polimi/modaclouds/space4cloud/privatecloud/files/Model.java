@@ -2,24 +2,19 @@ package it.polimi.modaclouds.space4cloud.privatecloud.files;
 
 import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-public class Model {
+public abstract class Model {
 	
-	public boolean print(String file) {
-		
-		try {
-			Files.copy(this.getClass().getResourceAsStream("/" + Configuration.RUN_MODEL), Paths.get(file), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-		} catch (Exception e) {
-			return false;
-		}
-		
-		return true;
-	}
-
+	public abstract boolean print(String file);
+	
 	public static void print() {
-		Model m = new Model();
-		m.print(Configuration.RUN_MODEL);
+		switch (Configuration.MATH_SOLVER) {
+		case AMPL:
+			ModelAMPL.print();
+			break;
+		case CMPL:
+			ModelCMPL.print();
+			break;
+		}
 	}
+	
 }

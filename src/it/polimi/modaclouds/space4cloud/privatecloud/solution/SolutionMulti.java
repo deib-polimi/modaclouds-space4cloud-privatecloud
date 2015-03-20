@@ -130,7 +130,7 @@ public class SolutionMulti implements Cloneable, Serializable {
 			List<ResourceContainer> rcs = rme.getResourceContainer();
 			for (ResourceContainer rc : rcs) {
 				if (rc.getId().equals(tierId) && rc.getProvider().equals(providerName)) {
-					Location l = rc.getCloudResource().getLocation();
+					Location l = rc.getCloudElement().getLocation();
 					if (l == null)
 						return null;
 					else
