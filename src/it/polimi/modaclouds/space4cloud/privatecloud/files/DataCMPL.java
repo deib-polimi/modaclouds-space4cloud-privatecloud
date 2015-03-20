@@ -55,124 +55,124 @@ public class DataCMPL extends Data {
 			
 			out.println();
 			
-			out.print("%RAMHost[HOST] default 0 <");
+			out.print("%RAMHost[HOST] = 0 indices <");
 			for (i = 0; i < hosts.size() ; ++i)
-				out.printf(" %d", hosts.get(i).ram);
-			out.println(" >");
+				out.printf("\nh%s %d", hostFormatter.format(i+1), hosts.get(i).ram);
+			out.println("\n>");
 			
-			out.print("%CPUCoreHost[HOST] default 0 <");
+			out.print("%CPUCoreHost[HOST] = 0 indices <");
 			for (i = 0; i < hosts.size() ; ++i)
-				out.printf(" %d", hosts.get(i).cpu_cores);
-			out.println(" >");
+				out.printf("\nh%s %d", hostFormatter.format(i+1), hosts.get(i).cpu_cores);
+			out.println("\n>");
 			
-			out.print("%DensityHost[HOST] default 0 <");
+			out.print("%DensityHost[HOST] = 0 indices <");
 			for (i = 0; i < hosts.size() ; ++i)
-				out.printf(" %s", doubleFormatter.format(hosts.get(i).density));
-			out.println(" >");
+				out.printf("\nh%s %s", hostFormatter.format(i+1), doubleFormatter.format(hosts.get(i).density));
+			out.println("\n>");
 			
-			out.print("%CPUSpeedHost[HOST] default 0 <");
+			out.print("%CPUSpeedHost[HOST] = 0 indices <");
 			for (i = 0; i < hosts.size() ; ++i)
-				out.printf(" %s", doubleFormatter.format(hosts.get(i).cpu_speed));
-			out.println(" >");
+				out.printf("\nh%s %s", hostFormatter.format(i+1), doubleFormatter.format(hosts.get(i).cpu_speed));
+			out.println("\n>");
 			
-			out.print("%StorageHost[HOST] default 0 <");
+			out.print("%StorageHost[HOST] = 0 indices <");
 			for (i = 0; i < hosts.size() ; ++i)
-				out.printf(" %d", hosts.get(i).storage);
-			out.println(" >");
+				out.printf("\nh%s %d", hostFormatter.format(i+1), hosts.get(i).storage);
+			out.println("\n>");
 			
-			out.print("%CostHost[HOST,TIME_INT] default 0 <");
+			out.print("%CostHost[HOST,TIME_INT] = 0 indices <");
 			for (i = 0; i < hosts.size(); ++i) {
 				for (h = 0; h < hosts.get(0).hourlyCosts.length; ++h)
-					out.printf(" %s", doubleFormatter.format(hosts.get(i).hourlyCosts[h]));
+					out.printf("\nh%s t%s %s", hostFormatter.format(i+1), timeIntFormatter.format(h+1), doubleFormatter.format(hosts.get(i).hourlyCosts[h]));
 			}
-			out.println(" >");
+			out.println("\n>");
 			
 			out.println();
 			
-			out.print("%RAMVm[VM] default 0 <");
+			out.print("%RAMVm[VM] = 0 indices <");
 			v = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t : s.tiers.values()) {
 					for (i = 1; i <= t.getMaxMachines(); ++i, ++v) {
-						out.printf(" %d", t.machines[0].ram);
+						out.printf("\nv%s %d", vmFormatter.format(v), t.machines[0].ram);
 					}
 				}
 			}
-			out.println(" >");
+			out.println("\n>");
 			
-			out.print("%CPUCoreVm[VM] default 0 <");
+			out.print("%CPUCoreVm[VM] = 0 indices <");
 			v = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t : s.tiers.values()) {
 					for (i = 1; i <= t.getMaxMachines(); ++i, ++v) {
-						out.printf(" %d", t.machines[0].cpu_cores);
+						out.printf("\nv%s %d", vmFormatter.format(v), t.machines[0].cpu_cores);
 					}
 				}
 			}
-			out.println(" >");
+			out.println("\n>");
 			
-			out.print("%CPUSpeedVm[VM] default 0 <");
+			out.print("%CPUSpeedVm[VM] = 0 indices <");
 			v = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t : s.tiers.values()) {
 					for (i = 1; i <= t.getMaxMachines(); ++i, ++v) {
-						out.printf(" %s", doubleFormatter.format(t.machines[0].cpu_speed));
+						out.printf("\nv%s %s", vmFormatter.format(v), doubleFormatter.format(t.machines[0].cpu_speed));
 					}
 				}
 			}
-			out.println(" >");
+			out.println("\n>");
 			
-			out.print("%StorageVm[VM] default 0 <");
+			out.print("%StorageVm[VM] = 0 indices <");
 			v = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t : s.tiers.values()) {
 					for (i = 1; i <= t.getMaxMachines(); ++i, ++v) {
-						out.printf(" %d", t.machines[0].storage);
+						out.printf("\nv%s %d", vmFormatter.format(v), t.machines[0].storage);
 					}
 				}
 			}
-			out.println(" >");
+			out.println("\n>");
 			
-			out.print("%CostVm[VM,TIME_INT] default 0 <");
+			out.print("%CostVm[VM,TIME_INT] = 0 indices <");
 			v = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t : s.tiers.values()) {
 					for (i = 1; i <= t.getMaxMachines(); ++i, ++v) {
 						for (h = 0; h < t.machines.length; ++h)
-							out.printf(" %s", doubleFormatter.format(t.machines[h].cost));
+							out.printf("\nv%s t%s %s", vmFormatter.format(v), timeIntFormatter.format(h+1), doubleFormatter.format(t.machines[h].cost));
 					}
 				}
 			}
-			out.println(" >");
+			out.println("\n>");
 			
 			out.println();
 			
-			out.print("%ActivationValue[VM,TIME_INT] default 0 <");
+			out.print("%ActivationValue[VM,TIME_INT] = 0 indices <");
 			v = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t : s.tiers.values()) {
 					for (i = 1; i <= t.getMaxMachines(); ++i, ++v) {
 						for (h = 0; h < t.machines.length; ++h)
-							out.printf(" %d", t.machines[h].replicas >= i ? 1 : 0);
+							out.printf("\nv%s t%s %d", vmFormatter.format(v), timeIntFormatter.format(h+1), t.machines[h].replicas >= i ? 1 : 0);
 					}
 				}
 			}
-			out.println(" >");
+			out.println("\n>");
 			
-			out.print("%BelongsVm[VM,TIER] default 0 <");
+			out.print("%BelongsVm[VM,TIER] = 0 indices <");
 			v = 1;
 			w = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t : s.tiers.values()) {
 					for (i = 1; i <= t.getMaxMachines(); ++i, ++v) {
-						out.printf(" %d", tierFormatter.format(w), 1);
+						out.printf("\nv%s r%s %d", vmFormatter.format(v), tierFormatter.format(w), 1);
 					}
 					w++;
 				}
 			}
-			out.println(" >");
+			out.println("\n>");
 			
-			out.print("param TierRatio default 0 :=");
+			out.print("%TierRatio[TIER,TIER,TIME_INT] = 0 indices <");
 			int w1 = 1, w2 = 1;
 			for (Solution s : solution.getAll()) {
 				for (Tier t1 : s.tiers.values()) {
@@ -201,7 +201,7 @@ public class DataCMPL extends Data {
 					w1++;
 				}
 			}
-			out.println(";");
+			out.println("\n>");
 			
 			
 			out.flush();
