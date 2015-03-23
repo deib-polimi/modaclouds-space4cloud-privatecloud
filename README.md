@@ -36,7 +36,7 @@ To use this tool you need to add it as a maven dependency:
 
 * Group Id: it.polimi.modaclouds.space4cloud
 * Artifact Id: privatecloud
-* Version: 0.0.17
+* Version: 0.0.18
 * Type: jar
 * Scope: compile.
 
