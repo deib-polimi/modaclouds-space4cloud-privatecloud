@@ -22,23 +22,23 @@ public class PrivateCloud {
 	private SolutionMulti solution;
 	private List<Host> hosts;
 	
-	public PrivateCloud(String configurationFile, String solutionFile) {
+	public PrivateCloud(String configurationFile, String solutionFile) throws PrivateCloudException {
 		try {
 			Configuration.loadConfiguration(configurationFile);
-			
-			if (SolutionMulti.isEmpty(new File(solutionFile))) {
-				throw new Exception("The solution file doesn't exist or is empty!");
-			} else {
-				solution = new SolutionMulti(new File(solutionFile));
-				hosts = Host.getFromFile(new File(Configuration.PRIVATE_CLOUD_HOSTS));
-				
-				if (solution.size() == 0)
-					throw new Exception("Error with the solution!");
-				if (hosts.size() == 0)
-					throw new Exception("Error with the hosts!");
-			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new PrivateCloudException("Error while loading the configuration file!", e);
+		}
+		
+		if (SolutionMulti.isEmpty(new File(solutionFile))) {
+			throw new PrivateCloudException("The solution file doesn't exist or is empty!");
+		} else {
+			solution = new SolutionMulti(new File(solutionFile));
+			hosts = Host.getFromFile(new File(Configuration.PRIVATE_CLOUD_HOSTS));
+			
+			if (solution.size() == 0)
+				throw new PrivateCloudException("Error with the solution!");
+			if (hosts.size() == 0)
+				throw new PrivateCloudException("Error with the hosts!");
 		}
 	}
 	
@@ -101,7 +101,7 @@ public class PrivateCloud {
 	
 	public static boolean removeTempFiles = true;
 	
-	public void cleanFiles() {
+	public void cleanFiles() throws PrivateCloudException {
 		try {
 			Files.deleteIfExists(Paths.get(Configuration.RUN_FILE));
 			Files.deleteIfExists(Paths.get(Configuration.RUN_DATA));
@@ -110,7 +110,7 @@ public class PrivateCloud {
 			Files.deleteIfExists(Paths.get(Configuration.RUN_LOG));
 			Files.deleteIfExists(Paths.get(Configuration.RUN_RES));
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new PrivateCloudException("Error while removing the temporary files.", e);
 		}
 	}
 

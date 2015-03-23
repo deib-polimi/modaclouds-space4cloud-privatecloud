@@ -29,9 +29,9 @@ public class Main {
 	}
 	
 	public static void mainConstellation(String[] args) {
-		String basePath       = "C:\\Users\\Riccardo\\Desktop\\SPACE4CLOUD\\runtime-New_configuration\\Constellation\\";
-		String configuration  = basePath + "test.properties";
-		String solution       = basePath + "testSolution.xml";
+		String basePath       = "/Users/ft/Development/workspace-s4c-runtime/Constellation/";
+		String configuration  = basePath + "OptimizationMacLocal.properties";
+		String solution       = basePath + "ContainerExtensions/Computed/Solution-Conference-Amazon.xml";
 
 		
 		PrivateCloud.removeTempFiles = false;

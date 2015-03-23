@@ -1,14 +1,21 @@
 package it.polimi.modaclouds.space4cloud.privatecloud.solution;
 
 import it.polimi.modaclouds.qos_models.schema.Location;
+import it.polimi.modaclouds.qos_models.schema.ObjectFactory;
+import it.polimi.modaclouds.qos_models.schema.Replica;
+import it.polimi.modaclouds.qos_models.schema.ReplicaElement;
 import it.polimi.modaclouds.qos_models.schema.ResourceContainer;
 import it.polimi.modaclouds.qos_models.schema.ResourceModelExtension;
+import it.polimi.modaclouds.qos_models.util.XMLHelper;
 import it.polimi.modaclouds.space4cloud.privatecloud.Configuration;
 import it.polimi.modaclouds.space4cloud.privatecloud.db.DataHandler;
 import it.polimi.modaclouds.space4cloud.privatecloud.db.DataHandlerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -16,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,6 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * This class should handle a multi-provider solution, or also, in the
@@ -96,6 +105,45 @@ public class SolutionMulti implements Cloneable, Serializable {
 	}
 
 	public static boolean isEmpty(File solution) {
+		if (isResourceModelExtension(solution))
+			return isEmptyResourceModelExtension(solution);
+		else
+			return isEmptyFileSolution(solution);
+	}
+	
+	private static boolean isResourceModelExtension(File f) {
+		try {
+			XMLHelper.deserialize(f.toURI().toURL(), ResourceModelExtension.class);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	private static boolean isEmptyResourceModelExtension(File solution) {
+		try {
+			ResourceModelExtension rme = XMLHelper.deserialize(solution
+					.toURI().toURL(), ResourceModelExtension.class);
+			
+			for (ResourceContainer rc : rme.getResourceContainer()) {
+				it.polimi.modaclouds.qos_models.schema.CloudService cs = rc.getCloudElement();
+				if (cs != null) {
+					Replica r = cs.getReplicas();
+					if (r != null) {
+						List<ReplicaElement> re = r.getReplicaElement();
+						if (re.size() > 0)
+							return false;
+					}
+				}
+			}
+			
+		} catch (MalformedURLException | JAXBException | SAXException e) {
+			logger.error("Error in checking if the solution is empty",e);
+		}
+		return true;
+	}
+
+	private static boolean isEmptyFileSolution(File solution) {
 		if (solution != null && solution.exists())
 			try {
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory
@@ -143,8 +191,94 @@ public class SolutionMulti implements Cloneable, Serializable {
 		
 		return null;
 	}
-
+	
 	public boolean setFrom(File initialSolution) {
+		if (isResourceModelExtension(initialSolution))
+			return setFromResourceModelExtension(initialSolution);
+		else
+			return setFromFileSolution(initialSolution);
+	}
+	
+	private boolean setFromResourceModelExtension(File initialSolution) {
+		boolean res = false;
+		
+		if (initialSolution != null) {
+			try {
+				ResourceModelExtension rme = XMLHelper.deserialize(initialSolution
+						.toURI().toURL(), ResourceModelExtension.class);
+				
+				cost = Integer.MAX_VALUE;
+				
+				for (ResourceContainer rc : rme.getResourceContainer()) {
+					it.polimi.modaclouds.qos_models.schema.CloudService cs = rc.getCloudElement();
+					
+					String provider = rc.getProvider();
+					String tierId = rc.getId();
+					String name = rc.getName();
+					String resourceName = cs.getResourceSizeID();
+					String serviceName = cs.getServiceName();
+					String serviceType = cs.getServiceType();
+					
+					if (!serviceType.equals("Compute"))
+						continue;
+					
+					String region = null;
+					
+					Location l = cs.getLocation();
+					if (l != null)
+						 region = l.getRegion();
+					
+					Solution sol = add(provider, tierId, name, resourceName, serviceName, serviceType);
+					
+					Tier t = sol.tiers.get(tierId);
+
+					Solution solution = get(provider);
+					if (solution == null)
+						continue;
+
+					DataHandler dataHandler = DataHandlerFactory.getHandler();
+
+					double speed = dataHandler.getProcessingRate(provider,
+							serviceName, resourceName);
+					int ram = dataHandler.getAmountMemory(provider, serviceName,
+							resourceName);
+					int numberOfCores = dataHandler.getNumberOfReplicas(provider,
+							serviceName, resourceName);
+					int storage = dataHandler.getStorage(provider,
+							serviceName, resourceName);
+					double cost = dataHandler.getCost(provider, serviceName, resourceName, region);
+
+					Replica r = cs.getReplicas();
+					if (r == null)
+						continue;
+					List<ReplicaElement> hourAllocations = r.getReplicaElement();
+					
+					for (ReplicaElement m : hourAllocations) {
+						int hour = m.getHour();
+						int allocation = m.getValue();
+						
+						t.machines[hour].cpu_speed = speed;
+						t.machines[hour].ram = ram;
+						t.machines[hour].cpu_cores = numberOfCores;
+						t.machines[hour].storage = storage;
+						t.machines[hour].replicas = allocation;
+						t.machines[hour].cost = cost;
+					}
+				}
+				
+				res = true;
+				
+			} catch (Exception e) {
+				logger.error("Error while importing data from a solution file.", e);
+				return false;
+			}
+		}
+		
+		return res;
+	}
+
+	@Deprecated
+	private boolean setFromFileSolution(File initialSolution) {
 		
 		boolean res = false;
 		
@@ -304,6 +438,89 @@ public class SolutionMulti implements Cloneable, Serializable {
 
 	
 	public void exportLight(Path filePath) {
+//		try {
+//			DocumentBuilderFactory docFactory = DocumentBuilderFactory
+//					.newInstance();
+//			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+//
+//			// root elements
+//			Document doc = docBuilder.newDocument();
+//			Element rootElement = doc.createElement("SolutionMultiResult");
+//			doc.appendChild(rootElement);
+//
+//			// set cost
+//			rootElement.setAttribute("cost", "" + getCost());
+//			// set evaluationtime
+//			rootElement.setAttribute("time", "" + 0);
+//			// set feasibility
+//			rootElement.setAttribute("feasibility", "" + isFeasible());
+//
+//			for (Solution sol : getAll()) {
+//				Element solution = doc.createElement("Solution");
+//				rootElement.appendChild(solution);
+//
+//				// set cost
+//				solution.setAttribute("cost", "" + 0);
+//				// set generation time
+//				solution.setAttribute("time", "" + 0);
+//				// set generation iteration
+//				solution.setAttribute("iteration", "" + 0);
+//				// set feasibility
+//				solution.setAttribute("feasibility", "" + false);
+//
+//				// create tier container element
+//				Element tiers = doc.createElement("Tiers");
+//				solution.appendChild(tiers);
+//				
+//				for (Tier t : sol.tiers.values()) {
+//					// create the tier
+//					Element tier = doc.createElement("Tier");
+//					tiers.appendChild(tier);
+//
+//					// set id, name, provider name, service name, resource name,
+//					// service type
+//					tier.setAttribute("id", t.id);
+//					tier.setAttribute("name", t.name);
+//
+//					tier.setAttribute("providerName", t.providerName);
+//					tier.setAttribute("serviceName", t.serviceName);
+//					tier.setAttribute("resourceName", t.resourceName);
+//					tier.setAttribute("serviceType", t.serviceType);
+//
+//					for (int i = 0; i < 24; i++) {
+//						// create the allocation element
+//						Element hourAllocation = doc.createElement("HourAllocation");
+//						tier.appendChild(hourAllocation);
+//						hourAllocation.setAttribute("hour", "" + i);
+//						hourAllocation.setAttribute("allocation", "" + t.machines[i].replicas);
+//					}
+//				}
+//
+//			}
+//
+//			TransformerFactory transformerFactory = TransformerFactory
+//					.newInstance();
+//			Transformer transformer = transformerFactory.newTransformer();
+//			DOMSource source = new DOMSource(doc);
+//			File file = filePath.toFile();
+//			StreamResult result = new StreamResult(file);
+//			logger.info("Exported in: " + file.getAbsolutePath());
+//
+//			// Output to console for testing
+//			// StreamResult result = new StreamResult(System.out);
+//
+//			transformer.transform(source, result);
+//
+//		} catch (ParserConfigurationException | TransformerException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+
+		exportAsExtension(filePath);
+	}
+	
+	@Deprecated
+	public void exportAsFileSolution(Path filePath) {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory
 					.newInstance();
@@ -381,6 +598,39 @@ public class SolutionMulti implements Cloneable, Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
+	
+	public ResourceModelExtension getAsExtension() {
+		//Build the objects
+		ObjectFactory factory = new ObjectFactory();
+		ResourceModelExtension extension = factory.createResourceModelExtension();
+		List<ResourceContainer> resourceContainers = extension.getResourceContainer();
+		
+		for (Solution s : getAll()) {
+			ResourceModelExtension ext = s.getAsExtension();
+			List<ResourceContainer> rcs = ext.getResourceContainer();
+			
+			for (ResourceContainer rc : rcs)
+				resourceContainers.add(rc);
+		}
+		
+		return extension;
+	}
+	
+	/**
+	 * Export the solution in the format of the extension used as input for space4cloud
+	 */
+	public void exportAsExtension(Path fileName){
+		ResourceModelExtension extension = getAsExtension();
+		//serialize them		
+		try {			
+			XMLHelper.serialize(extension, ResourceModelExtension.class, new FileOutputStream(fileName.toFile()));
+		} catch (JAXBException e) {
+			logger.error("The generated solution is not valid",e);
+		} catch (FileNotFoundException e) {
+			logger.error("Error exporting the solution",e);
+		}
+		
+	}
+	
 }

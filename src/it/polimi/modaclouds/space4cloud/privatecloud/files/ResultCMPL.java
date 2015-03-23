@@ -23,6 +23,11 @@ public class ResultCMPL extends Result {
 		return result.export();
 	}
 	
+	@Override
+	public void match(String s) {
+		
+	}
+	
 //	@Override
 //	public void match(String s) {
 //		if (Pattern.matches("X\\['v[0-9]+','h[0-9]+','t[0-9]+'\\] = 1", s)) {
