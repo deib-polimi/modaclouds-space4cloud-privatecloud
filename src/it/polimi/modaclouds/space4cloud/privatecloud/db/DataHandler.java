@@ -9,7 +9,12 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DataHandler {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DataHandler.class);
 	
 	/**
 	 * Instantiates a new data handler. it also charges data from the database
@@ -23,7 +28,7 @@ public class DataHandler {
 			FileInputStream fis = new FileInputStream(Configuration.DB_CONNECTION_FILE);
 			DatabaseConnector.initConnection(fis);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new SQLException("Error while initializing the database.", e);
 		}
 	}
 	
@@ -45,7 +50,7 @@ public class DataHandler {
 				amountMemories.put(key, memory);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting infos from the database.", e);
 		}
 
 		return memory;
@@ -80,7 +85,7 @@ public class DataHandler {
 				numbersOfReplicas.put(key, numberOfReplicas);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting infos from the database.", e);
 		}
 
 		return numberOfReplicas;
@@ -116,7 +121,7 @@ public class DataHandler {
 				processingRates.put(key, processingRate);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting infos from the database.", e);
 		}
 
 		return processingRate;
@@ -141,7 +146,7 @@ public class DataHandler {
 				storages.put(key, storage);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting infos from the database.", e);
 		}
 
 		return storage;
@@ -172,7 +177,7 @@ public class DataHandler {
 				costs.put(key, cost);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting infos from the database.", e);
 		}
 		
 		return cost;
