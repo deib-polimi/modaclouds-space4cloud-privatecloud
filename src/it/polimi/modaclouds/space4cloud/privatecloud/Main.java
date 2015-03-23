@@ -11,6 +11,16 @@ public class Main {
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	public static void doMain(String configuration, String solution) {
+		if (configuration == null || !new File(configuration).exists()) {
+			logger.error("The configuration file doesn't exist! Exiting...");
+			return;
+		}
+		
+		if (solution == null || !new File(solution).exists()) {
+			logger.error("The solution file doesn't exist! Exiting...");
+			return;
+		}
+		
 		PrivateCloud.removeTempFiles = false;
 		
 		try {
