@@ -17,7 +17,12 @@ import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PrivateCloud {
+	
+	private static final Logger logger = LoggerFactory.getLogger(PrivateCloud.class);
 	
 	private SolutionMulti solution;
 	private List<Host> hosts;
@@ -63,6 +68,15 @@ public class PrivateCloud {
 		if (solutions != null)
 			return solutions;
 		
+		if (path == null)
+			path = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY);
+		
+		if (Configuration.usesPaaS()) {
+			logger.error("PaaS not supported at the moment.");
+			solutions = Result.printEmpty(solution, hosts, path);
+			return solutions;
+		}
+		
 		Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + "/" + getDate();
 		
 		try {
@@ -79,9 +93,6 @@ public class PrivateCloud {
 		} catch (Exception e) {
 			throw new PrivateCloudException("Error when sending or receiving file or when executing the script.", e);
 		}
-		
-		if (path == null)
-			path = Paths.get(Configuration.PROJECT_BASE_FOLDER, Configuration.WORKING_DIRECTORY);
 		
 		try {
 			solutions = Result.parse(solution, hosts, path);

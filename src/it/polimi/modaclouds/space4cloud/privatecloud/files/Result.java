@@ -69,6 +69,19 @@ public abstract class Result {
 		return f;
 	}
 	
+	public static List<File> printEmpty(SolutionMulti solution, List<Host> hosts, Path path) {
+		List<File> f = null;
+		switch (Configuration.MATH_SOLVER) {
+		case AMPL:
+			f = new ResultAMPL(solution, hosts, path).export();
+			break;
+		case CMPL:
+			f = new ResultCMPL(solution, hosts, path).export();
+			break;
+		}
+		return f;
+	}
+	
 	protected HashMap<String, Integer> maxMachinesMap = new HashMap<String, Integer>();
 	
 	public abstract void match(String s);
