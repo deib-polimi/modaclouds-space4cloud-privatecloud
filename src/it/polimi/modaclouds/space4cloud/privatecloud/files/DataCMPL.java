@@ -48,7 +48,7 @@ public class DataCMPL extends Data {
 			out.println(" >");
 			
 			DecimalFormat tierFormatter = intFormatter(solution.getTotalTiers());
-			out.print("%TIER <");
+			out.print("%TIER set <");
 			for (i = 1; i <= solution.getTotalTiers() ; ++i)
 				out.printf(" r%s", tierFormatter.format(i));
 			out.println(" >");
