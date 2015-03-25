@@ -60,7 +60,7 @@ public class Configuration {
 	public static String DEFAULTS_BASH_CMPL = "bashCMPL.run";
 	public static int CMPL_THREADS = 4;
 	
-	public static Solver MATH_SOLVER = Solver.AMPL;
+	public static Solver MATH_SOLVER = Solver.CMPL;
 	
 	public static enum Solver {
 		AMPL("AMPL"), CMPL("CMPL");
