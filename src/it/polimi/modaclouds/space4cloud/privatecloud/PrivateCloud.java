@@ -9,8 +9,6 @@ import it.polimi.modaclouds.space4cloud.privatecloud.solution.SolutionMulti;
 import it.polimi.modaclouds.space4cloud.privatecloud.ssh.SshConnector;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -101,7 +99,7 @@ public class PrivateCloud {
 		}
 		
 		if (removeTempFiles)
-			cleanFiles();
+			Configuration.deleteTempFiles();
 		
 		return solutions;
 	}
@@ -111,19 +109,6 @@ public class PrivateCloud {
 	}
 	
 	public static boolean removeTempFiles = true;
-	
-	public void cleanFiles() throws PrivateCloudException {
-		try {
-			Files.deleteIfExists(Paths.get(Configuration.RUN_FILE));
-			Files.deleteIfExists(Paths.get(Configuration.RUN_DATA));
-			Files.deleteIfExists(Paths.get(Configuration.DEFAULTS_BASH));
-			Files.deleteIfExists(Paths.get(Configuration.RUN_MODEL));
-			Files.deleteIfExists(Paths.get(Configuration.RUN_LOG));
-			Files.deleteIfExists(Paths.get(Configuration.RUN_RES));
-		} catch (IOException e) {
-			throw new PrivateCloudException("Error while removing the temporary files.", e);
-		}
-	}
 
 	public static List<File> perform(String configurationFile, String solutionFile, String basePath) throws PrivateCloudException {
 		PrivateCloud pc = new PrivateCloud(configurationFile, solutionFile);

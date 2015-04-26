@@ -55,7 +55,7 @@ public class Configuration {
 	}
 	
 	// this function deletes all temp files
-	public static void deleteTempFiles(int datas) {
+	public static void deleteTempFiles() {
 		try {
 			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_FILE));
 			Files.deleteIfExists(Paths.get(LOCAL_TEMPORARY_FOLDER, RUN_DATA));
