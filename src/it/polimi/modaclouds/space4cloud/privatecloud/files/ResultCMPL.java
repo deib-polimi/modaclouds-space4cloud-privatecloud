@@ -8,6 +8,7 @@ import it.polimi.modaclouds.space4cloud.privatecloud.solution.Tier;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
@@ -20,7 +21,7 @@ public class ResultCMPL extends Result {
 
 	public static List<File> parse(SolutionMulti solution, List<Host> hosts, Path path) {
 		ResultCMPL result = new ResultCMPL(solution, hosts, path);
-		result.parse(Configuration.RUN_RES_CMPL);
+		result.parse(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, Configuration.RUN_RES_CMPL).toString());
 		return result.export();
 	}
 	

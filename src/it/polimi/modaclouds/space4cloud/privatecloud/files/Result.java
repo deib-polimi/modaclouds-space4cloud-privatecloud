@@ -13,7 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class Result {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Result.class);
+	
 	protected SolutionMulti solution;
 	protected List<Host> hosts;
 	private Path path;
@@ -35,7 +41,7 @@ public abstract class Result {
 			
 			in.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while parsing the result file.", e);
 		}
 	}
 	

@@ -186,7 +186,7 @@ public class SolutionMulti implements Cloneable, Serializable {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the region from the resource environment extension.", e);
 		}
 		
 		return null;
@@ -365,7 +365,7 @@ public class SolutionMulti implements Cloneable, Serializable {
 			res = true;
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while getting the information from the file solution.", e);
 			return false;
 		}
 		
@@ -595,8 +595,7 @@ public class SolutionMulti implements Cloneable, Serializable {
 			transformer.transform(source, result);
 
 		} catch (ParserConfigurationException | TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error while saving the file solution.", e);
 		}
 	}
 	

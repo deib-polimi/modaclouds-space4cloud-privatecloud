@@ -8,6 +8,7 @@ import it.polimi.modaclouds.space4cloud.privatecloud.solution.Tier;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,7 @@ public class ResultAMPL extends Result {
 
 	public static List<File> parse(SolutionMulti solution, List<Host> hosts, Path path) {
 		ResultAMPL result = new ResultAMPL(solution, hosts, path);
-		result.parse(Configuration.RUN_RES);
+		result.parse(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, Configuration.RUN_RES).toString());
 		return result.export();
 	}
 	

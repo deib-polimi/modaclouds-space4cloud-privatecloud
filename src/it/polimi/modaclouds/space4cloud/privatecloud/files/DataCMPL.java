@@ -8,10 +8,16 @@ import it.polimi.modaclouds.space4cloud.privatecloud.solution.Tier;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DataCMPL extends Data {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DataCMPL.class);
 
 	public DataCMPL(SolutionMulti solution, List<Host> hosts) {
 		super(solution, hosts);
@@ -23,7 +29,7 @@ public class DataCMPL extends Data {
 //		PrintWriter out = new PrintWriter(sw);
 		
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter(file));
+			PrintWriter out = new PrintWriter(new FileWriter(Paths.get(Configuration.LOCAL_TEMPORARY_FOLDER, file).toFile()));
 			
 			DecimalFormat doubleFormatter = doubleFormatter();
 		
@@ -207,7 +213,7 @@ public class DataCMPL extends Data {
 			out.flush();
 			out.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error while writing the data file.", e);
 			return false;
 		}
 		
