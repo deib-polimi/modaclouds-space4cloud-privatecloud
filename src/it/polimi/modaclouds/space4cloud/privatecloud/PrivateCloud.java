@@ -77,7 +77,7 @@ public class PrivateCloud {
 			return solutions;
 		}
 		
-		Configuration.RUN_WORKING_DIRECTORY = Configuration.DEFAULTS_WORKING_DIRECTORY + Configuration.DEFAULTS_WORKING_DIRECTORY_SUFFIX + "/" + getDate();
+		Configuration.setWorkingSubDirectory(getDate());
 		
 		try {
 			Data.print(solution, hosts);

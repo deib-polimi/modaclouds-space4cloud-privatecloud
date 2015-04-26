@@ -54,16 +54,6 @@ public class Configuration {
 		return res;
 	}
 	
-	public static String LOCAL_TEMPORARY_FOLDER;
-	static {
-		try {
-			LOCAL_TEMPORARY_FOLDER = Files.createTempDirectory("pc").toString();
-		} catch (Exception e) {
-			logger.error("Error while creating a temporary folder.", e);
-			LOCAL_TEMPORARY_FOLDER = ".";
-		}
-	}
-	
 	// this function deletes all temp files
 	public static void deleteTempFiles(int datas) {
 		try {
@@ -89,8 +79,26 @@ public class Configuration {
 	
 	// Information used in the AMPL.run file
 	public static String DEFAULTS_WORKING_DIRECTORY = "/tmp/s4c"; //upload directory on AMPL server
-	public static final String DEFAULTS_WORKING_DIRECTORY_SUFFIX = "/privatecloud"; //upload directory on AMPL server
-	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY + DEFAULTS_WORKING_DIRECTORY_SUFFIX;
+	public static final String DEFAULTS_WORKING_DIRECTORY_SUFFIX = "privatecloud"; //upload directory on AMPL server
+	public static String RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY;
+	
+	public static String LOCAL_TEMPORARY_FOLDER;
+	static {
+		try {
+			LOCAL_TEMPORARY_FOLDER = Files.createTempDirectory(DEFAULTS_WORKING_DIRECTORY_SUFFIX).toString();
+		} catch (Exception e) {
+			logger.error("Error while creating a temporary folder.", e);
+			LOCAL_TEMPORARY_FOLDER = ".";
+		}
+	}
+	
+	public static void setWorkingSubDirectory(String date) {
+		if (isRunningLocally())
+			RUN_WORKING_DIRECTORY = LOCAL_TEMPORARY_FOLDER;
+		else
+			RUN_WORKING_DIRECTORY = DEFAULTS_WORKING_DIRECTORY + "/" + DEFAULTS_WORKING_DIRECTORY_SUFFIX + "/" + date;
+	}
+	
 	public static final String RUN_FILE = "AMPL.run";
 	public static final String RUN_MODEL = "modelbursting.mod";
 	public static final String RUN_DATA = "data.dat";
